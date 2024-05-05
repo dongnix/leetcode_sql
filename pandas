@@ -6,3 +6,21 @@ def createDataframe(student_data: List[List[int]]):
     columns = ['student_id', 'age']
     df = pd.DataFrame(student_data, columns = columns)
     return df
+
+
+-- 262. Trips and Users
+
+with a as(
+select t. id, t.client_id, t.driver_id, t.city_id, t.status, t.request_at    
+from Trips as t
+left join users as u
+on t.client_id = u.users_id 
+left join users as u1
+on t.driver_id = u1.users_id 
+where u.banned = 'No' and u1.banned = 'No')
+
+select request_at as Day,
+round(sum(if(status='completed', 0, 1))/count(status),2) as 'Cancellation Rate'
+from a
+where request_at between '2013-10-01' and '2013-10-03'
+group by request_at
