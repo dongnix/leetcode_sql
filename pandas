@@ -45,3 +45,16 @@ and client_id not in (select users_id from users where banned = 'Yes')
 and driver_id not in (select users_id from users where banned = 'Yes')
 group by request_at
 
+
+-- 601. Human Traffic of Stadium
+-- use where first, id - row_number() is consecutive number of people > 100
+-- be aware consecutive is consecutive id, not vistit date 
+
+with a as(select *,  id - row_number()over(order by id asc) as rnk
+from stadium
+where people>=100)
+
+select id, visit_date, people
+from a
+where rnk in (select rnk from a group by rnk having count(rnk)>=3)
+
