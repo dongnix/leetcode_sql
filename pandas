@@ -24,3 +24,24 @@ round(sum(if(status='completed', 0, 1))/count(status),2) as 'Cancellation Rate'
 from a
 where request_at between '2013-10-01' and '2013-10-03'
 group by request_at
+
+-- another way
+
+select request_at as Day,
+round(sum(if(status='completed', 0, 1))/count(status),2) as 'Cancellation Rate'
+from Trips
+where request_at between '2013-10-01' and '2013-10-03'
+and client_id not in (select client_id from Trips as t left join users as u on t. client_id = u. users_id where u.banned = 'Yes')
+and driver_id not in (select driver_id from Trips as t left join users as u on t. driver_id = u. users_id where u.banned = 'Yes')
+group by request_at
+
+-- simplier way: since we already know the users fields are matching
+
+select request_at as Day,
+round(sum(if(status='completed', 0, 1))/count(status),2) as 'Cancellation Rate'
+from Trips
+where request_at between '2013-10-01' and '2013-10-03'
+and client_id not in (select users_id from users where banned = 'Yes')
+and driver_id not in (select users_id from users where banned = 'Yes')
+group by request_at
+
