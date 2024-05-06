@@ -58,3 +58,20 @@ select id, visit_date, people
 from a
 where rnk in (select rnk from a group by rnk having count(rnk)>=3)
 
+--570. Managers with at Least 5 Direct Reports: notice! id in, not managerId in ()
+
+select name
+from Employee
+where id in
+(select managerId from Employee group by managerId having  count(managerId) >= 5)
+
+-- pandas
+import pandas as pd
+def find_managers(employee: pd.DataFrame) -> pd.DataFrame:
+    # add a new column called count
+    managers = employee.groupby(['managerId'])['managerId'].agg(['count']).reset_index()
+    managers = managers.loc[managers['count']>= 5, ['managerId']]
+    new_df = employee.loc[employee['id'].isin(managers['managerId']), ['name']]
+    # new_df = employee[employee['id'].isin(managers['managerId'])][['name']]
+    return new_df
+
