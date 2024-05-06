@@ -91,3 +91,13 @@ pandas: need to reste_index after group by
     output = pd.merge(signups['user_id'],avg_conf,how='left').fillna(0)  
     return output
 
+-- 1193. Monthly Transactions I
+-- can also use: DATE_FORMAT(trans_date, '%Y-%m')
+
+select left(trans_date, 7) as month, country,
+count(id) as trans_count,
+sum(if(state ='approved', 1, 0)) as approved_count,
+sum(amount) as trans_total_amount,
+sum(if(state ='approved', amount, 0)) as approved_total_amount
+from Transactions
+group by left(trans_date, 7), country
