@@ -101,3 +101,17 @@ sum(amount) as trans_total_amount,
 sum(if(state ='approved', amount, 0)) as approved_total_amount
 from Transactions
 group by left(trans_date, 7), country
+
+pandas:
+
+def monthly_transactions(transactions: pd.DataFrame) -> pd.DataFrame:
+    transactions['month'] = transactions.apply(lambda x: x['trans_date'].strftime("%Y-%m"), axis=1)
+    # why cannot 0, must be? since we will use approved_count below, count a column will include 0, if we set to null, null won't be included 
+    transactions['approved_amount'] = transactions.apply(lambda x: x['amount'] if x['state'] == 'approved' else np.nan, axis =1 ) 
+    # we we need dropna here, since we wil have NULL contry in the test section, we want keep it as null in the amount summary
+    return transactions.groupby(['month','country'],as_index=False,dropna=False).agg(
+                            trans_count=('id', 'count'),                            
+                            approved_count=('approved_amount', 'count'),
+                            trans_total_amount=('amount', 'sum'),
+                            approved_total_amount=('approved_amount', 'sum')
+                            )
