@@ -1,3 +1,58 @@
+---
+title: "plot"
+output: html_document
+---
+
+```{r}
+setwd("/Users/xxx/Desktop")
+
+## Load the data associated with the steepest descent search
+TC_data <- read.csv("TC_STEP.csv", header = TRUE)
+
+## Calculate the average browsing time in each of these conditions and find the 
+## condition that minimizes it
+pstd.means <- aggregate(TC_data$Browse.Time, 
+                        by = list(Prev.Length = TC_data$Prev.Length, 
+                                  Prev.Size = TC_data$Prev.Size), 
+                        FUN = mean)
+par(mfrow=c(1,2))  
+plot(x = 1:6, y = pstd.means$x,
+     type = "l", xlab = "Step Number", ylab = "Average Browsing Time in TC")
+points(x = 1:6, y = pstd.means$x,
+       col = "red", pch = 16)
+
+## Load the data associated with the steepest descent search
+NO_data <- read.csv("NO_steepest.csv", header = TRUE)
+
+## Calculate the average browsing time in each of these conditions and find the 
+## condition that minimizes it
+pstd.means <- aggregate(NO_data$Browse.Time, 
+                        by = list(Prev.Length = NO_data$Prev.Length, 
+                                  Prev.Size = NO_data$Prev.Size), 
+                        FUN = mean)
+
+plot(x = 1:6, y = pstd.means$x,
+     type = "l", xlab = "Step Number", ylab = "Average Browsing Time in NO")
+points(x = 1:6, y = pstd.means$x,
+       col = "red", pch = 16)
+
+```
+
+
+```{r}
+par(mfrow=c(1,2))  
+plot(x = 1:6, y = pstd.means$x,
+     type = "l", xlab = "Step Number", ylab = "Average Browsing Time in TC")
+points(x = 1:6, y = pstd.means$x,
+       col = "red", pch = 16)
+plot(x = 1:6, y = pstd.means$x,
+     type = "l", xlab = "Step Number", ylab = "Average Browsing Time in NO")
+points(x = 1:6, y = pstd.means$x,
+       col = "red", pch = 16)
+
+```
+
+
 
 ## Central Composite Design Example
 
