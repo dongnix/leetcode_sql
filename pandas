@@ -124,3 +124,30 @@ from Delivery
 where (customer_id, order_date)
 in (select customer_id, min(order_date) as min_date
 from Delivery group by customer_id )
+
+
+550. Game Play Analysis IV
+-- use IN
+with a as(select player_id, min(event_date) as min_date
+from Activity 
+group by player_id)
+
+select round(count(a1.player_id)/(select count(distinct player_id) from Activity),2) as fraction
+from Activity as a1
+inner join a as a2 
+on a1.player_id = a2.player_id
+where DATEDIFF(a1.event_date, a2.min_date) =1
+and (a2.min_date, a1.player_id) 
+in (select min(event_date), player_id from Activity group by player_id)
+
+-- use sumif, replace first line
+
+select round(sum(if(datediff(a.event_date, b.first_date)=1,1,0))/count(distinct a.player_id),2) as fraction
+
+
+-- another way, I don't want to use join, since I DON'T know left or right one has min date,
+-- which one is min day, so use date_sub, a day could smaller than day -1 or large than day +1
+SELECT ROUND(COUNT(DISTINCT player_id) / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2) as fraction
+FROM Activity
+WHERE (player_id, DATE_SUB(event_date, INTERVAL 1 DAY))
+IN (SELECT player_id, MIN(event_date) AS first_login FROM ACTIVITY GROUP BY player_id)
