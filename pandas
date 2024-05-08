@@ -299,3 +299,31 @@ order by num desc
 limit 1
 
 
+-- 585. Investments in 2016
+
+with a as (select *, concat(lat,',', lon) as location
+from Insurance)
+
+select round(sum(tiv_2016),2) as tiv_2016
+from a 
+where a.tiv_2015 in(select c.tiv_2015 from Insurance as c where c.pid !=a.pid)
+and a.location not in (select location from a as b where a.pid != b.pid)
+
+-- 185. Department Top Three Salaries
+
+with a as(select d.name as Department, e.name as Employee,  salary, dense_rank() over(partition by departmentId order by salary desc) as rnk 
+from Employee as e
+left join Department as d
+on e.departmentId = d.id)
+
+select Department , Employee, salary as Salary
+from a
+where rnk <=3
+
+-- 176. Second Highest Salary
+
+select max(salary) as SecondHighestSalary
+from Employee
+where salary < (select max(salary) from Employee)
+
+
