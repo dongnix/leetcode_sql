@@ -326,4 +326,15 @@ select max(salary) as SecondHighestSalary
 from Employee
 where salary < (select max(salary) from Employee)
 
+# pandas: 
+import pandas as pd
+
+def second_highest_salary(employee: pd.DataFrame) -> pd.DataFrame:
+    max_value = employee['salary'].sort_values(ascending = False).drop_duplicates()
+    if len(max_value) >=2:
+        second_highest = max_value.iloc[1]
+    else:
+        second_highest = None
+    return pd.DataFrame({'SecondHighestSalary': [second_highest]})
+
 
